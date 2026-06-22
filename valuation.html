@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Free Nursery Valuation Tool | Oakfront Capital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:      #1a5c2a;
+      --green-mid:  #236b35;
+      --gold:       #c9a84c;
+      --gold-dark:  #a07828;
+      --white:      #ffffff;
+      --off-white:  #f8f7f4;
+      --light:      #eeebe4;
+      --text:       #1c1c1c;
+      --muted:      #6b6b6b;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      color: var(--text);
+      background: var(--white);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 60px; height: 70px;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(201,168,76,0.25);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled { box-shadow: 0 2px 24px rgba(0,0,0,0.07); }
+
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo img { height: 42px; width: auto; }
+    .nav-logo-text { display: flex; flex-direction: column; line-height: 1.2; }
+    .nav-logo-text .n1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 600; letter-spacing: 0.1em; color: var(--gold-dark); text-transform: uppercase;
+    }
+    .nav-logo-text .n2 { font-size: 0.62rem; font-weight: 400; letter-spacing: 0.2em; color: var(--green); text-transform: uppercase; }
+
+    .nav-links { display: flex; gap: 0; list-style: none; }
+    .nav-links a {
+      display: block; padding: 8px 18px; text-decoration: none;
+      font-size: 0.75rem; font-weight: 400; letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--text); transition: color 0.2s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 2px; left: 18px; right: 18px;
+      height: 1px; background: var(--gold); transform: scaleX(0); transition: transform 0.25s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-links .cta-link a {
+      color: var(--green); border: 1px solid var(--green); padding: 7px 20px; margin-left: 10px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links .cta-link a::after { display: none; }
+    .nav-links .cta-link a:hover { background: var(--green); color: var(--white); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── PAGE HERO ── */
+    .page-hero {
+      margin-top: 70px;
+      background: var(--green);
+      padding: 80px 60px 70px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '£';
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22rem; font-weight: 300; color: rgba(255,255,255,0.04);
+      position: absolute; top: -60px; right: 60px; line-height: 1; pointer-events: none;
+    }
+    .page-hero .eyebrow {
+      font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 18px; font-weight: 400;
+      animation: fadeUp 0.9s ease both;
+    }
+    .page-hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 300;
+      color: var(--white); line-height: 1.2; margin-bottom: 20px;
+      animation: fadeUp 0.9s 0.1s ease both;
+    }
+    .page-hero h1 em { font-style: italic; color: var(--gold); }
+    .page-hero p {
+      font-size: 1rem; color: rgba(255,255,255,0.72); font-weight: 300;
+      max-width: 620px; margin: 0 auto;
+      animation: fadeUp 0.9s 0.2s ease both;
+    }
+
+    /* ── TOOL SECTION ── */
+    .tool-section {
+      padding: 80px 60px 100px;
+      background: var(--off-white);
+    }
+    .tool-inner {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* ── INPUT CARD ── */
+    .input-card {
+      background: var(--white);
+      border-top: 3px solid var(--gold);
+      padding: 56px 56px 48px;
+      margin-bottom: 40px;
+      animation: fadeUp 0.9s 0.3s ease both;
+    }
+
+    .input-card .section-label {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold-dark); margin-bottom: 10px;
+    }
+    .input-card h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-weight: 300; color: var(--green);
+      margin-bottom: 8px; line-height: 1.25;
+    }
+    .gold-divider { width: 48px; height: 1px; background: var(--gold); margin: 18px 0 36px; }
+
+    .field-group { margin-bottom: 28px; }
+    .field-group label {
+      display: block;
+      font-size: 0.75rem; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 10px;
+    }
+    .field-group .field-hint {
+      font-size: 0.8rem; color: var(--muted); margin-bottom: 10px;
+      letter-spacing: 0; text-transform: none; font-weight: 300;
+    }
+    .input-wrap {
+      position: relative; display: flex; align-items: center;
+    }
+    .input-wrap .prefix {
+      position: absolute; left: 16px;
+      font-size: 1rem; color: var(--muted); font-weight: 300; pointer-events: none;
+    }
+    .input-wrap input {
+      width: 100%;
+      padding: 16px 16px 16px 34px;
+      border: 1px solid var(--light);
+      background: var(--off-white);
+      font-family: 'Jost', sans-serif;
+      font-size: 1rem; font-weight: 300;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+    }
+    .input-wrap input::-webkit-outer-spin-button,
+    .input-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .input-wrap input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+
+    .fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 28px; }
+
+    .cta-btn {
+      width: 100%;
+      padding: 20px 32px;
+      background: var(--green);
+      color: var(--gold);
+      border: none;
+      cursor: pointer;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      transition: background 0.2s, transform 0.2s;
+      margin-top: 12px;
+    }
+    .cta-btn:hover { background: var(--green-mid); transform: translateY(-2px); }
+    .cta-btn:active { transform: translateY(0); }
+
+    /* ── RESULTS CARD ── */
+    .results-card {
+      display: none;
+      background: var(--white);
+      border-top: 3px solid var(--gold);
+      padding: 56px 56px 48px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .results-card.visible { display: block; }
+
+    .results-card .section-label {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold-dark); margin-bottom: 10px;
+    }
+    .results-card h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem; font-weight: 300; color: var(--green);
+      margin-bottom: 8px; line-height: 1.25;
+    }
+
+    /* Valuation range */
+    .valuation-band {
+      background: var(--green);
+      padding: 40px 44px;
+      margin: 32px 0 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .val-item { text-align: center; flex: 1; min-width: 160px; }
+    .val-label {
+      font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.6); margin-bottom: 8px;
+    }
+    .val-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 600; color: var(--gold);
+      line-height: 1;
+    }
+    .val-divider {
+      width: 1px; height: 60px; background: rgba(255,255,255,0.2);
+      flex-shrink: 0;
+    }
+    .val-range-label {
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5); text-align: center; flex: 0 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Fee rows */
+    .fee-table { border-top: 1px solid var(--light); }
+    .fee-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--light);
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .fee-row-left { flex: 1; }
+    .fee-row-label {
+      font-size: 0.85rem; font-weight: 400; color: var(--text);
+      margin-bottom: 2px;
+    }
+    .fee-row-note {
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .fee-row-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem; font-weight: 600;
+      flex-shrink: 0;
+    }
+    .fee-row-amount.green { color: var(--green); }
+    .fee-row-amount.muted { color: var(--muted); }
+
+    .fee-row.highlight {
+      background: rgba(26,92,42,0.04);
+      padding: 20px 20px;
+      margin: 0 -20px;
+      border-left: 3px solid var(--gold);
+      border-bottom: 1px solid var(--light);
+    }
+
+    /* Saving callout */
+    .saving-box {
+      background: linear-gradient(135deg, #1a5c2a 0%, #236b35 100%);
+      padding: 28px 32px;
+      margin-top: 32px;
+      display: flex; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+    }
+    .saving-box .saving-text { flex: 1; }
+    .saving-box .saving-label {
+      font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(255,255,255,0.6); margin-bottom: 4px;
+    }
+    .saving-box .saving-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 600; color: var(--gold);
+    }
+    .saving-box .saving-sub {
+      font-size: 0.82rem; color: rgba(255,255,255,0.65); margin-top: 2px;
+    }
+    .saving-box a {
+      display: inline-block; padding: 13px 28px;
+      background: var(--gold); color: var(--green); text-decoration: none;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+      transition: background 0.2s; white-space: nowrap; border: none; cursor: pointer;
+      font-family: 'Jost', sans-serif;
+    }
+    .saving-box a:hover { background: #dbbf6a; }
+
+    .disclaimer {
+      margin-top: 32px;
+      font-size: 0.78rem; color: var(--muted); line-height: 1.7;
+      border-top: 1px solid var(--light); padding-top: 24px;
+    }
+
+    /* ── INFO STRIP ── */
+    .info-strip {
+      background: var(--green);
+      padding: 64px 60px;
+      text-align: center;
+    }
+    .info-strip .eyebrow {
+      font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 16px;
+    }
+    .info-strip h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 300;
+      color: var(--white); margin-bottom: 16px; line-height: 1.3;
+    }
+    .info-strip p {
+      font-size: 0.92rem; color: rgba(255,255,255,0.7);
+      max-width: 580px; margin: 0 auto 32px;
+    }
+    .info-strip a {
+      display: inline-block; padding: 14px 36px;
+      background: var(--gold); color: var(--green); text-decoration: none;
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .info-strip a:hover { background: #dbbf6a; transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer { background: #0d1f12; padding: 48px 60px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 24px; }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+      font-weight: 600; color: var(--gold); letter-spacing: 0.08em; text-transform: uppercase;
+      display: flex; flex-direction: column;
+    }
+    .footer-logo small { font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(255,255,255,0.4); font-family: 'Jost', sans-serif; font-weight: 300; margin-top: 4px; }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; color: rgba(255,255,255,0.5); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.3); }
+
+    /* ── BACK TO TOP ── */
+    .back-top {
+      position: fixed; bottom: 32px; right: 32px; z-index: 200;
+      width: 44px; height: 44px; background: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
+      transform: translateY(10px);
+    }
+    .back-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .back-top svg { width: 18px; height: 18px; fill: var(--gold); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .page-hero { padding: 60px 24px 56px; }
+      .tool-section { padding: 48px 20px 72px; }
+      .input-card, .results-card { padding: 36px 28px; }
+      .fields-row { grid-template-columns: 1fr; gap: 20px; }
+      .valuation-band { flex-direction: column; gap: 20px; }
+      .val-divider { width: 80px; height: 1px; }
+      .info-strip { padding: 56px 24px; }
+      footer { padding: 40px 24px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .saving-box { flex-direction: column; }
+    }
+  </style>
+</head>
+<body id="top">
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-text">
+      <span class="n1">Oakfront Capital</span>
+      <span class="n2">Nursery M&amp;A Specialists</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#buysell">Buy &amp; Sell</a></li>
+    <li><a href="index.html#about-intro">About</a></li>
+    <li class="cta-link"><a href="index.html#contact">Contact Us</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="eyebrow">Oakfront Capital · Free Tool</div>
+  <h1>Free Nursery<br><em>Valuation Tool</em></h1>
+  <p>Get an indicative valuation range for your nursery in seconds. No obligation. Completely confidential.</p>
+</div>
+
+<!-- TOOL -->
+<section class="tool-section">
+  <div class="tool-inner">
+
+    <!-- INPUT CARD -->
+    <div class="input-card">
+      <div class="section-label">Step 1 — Enter Your Figures</div>
+      <h2>Tell Us About Your Nursery</h2>
+      <div class="gold-divider"></div>
+
+      <div class="field-group">
+        <label for="turnover">Annual Turnover</label>
+        <div class="field-hint">Total revenue generated in your most recent full financial year.</div>
+        <div class="input-wrap">
+          <span class="prefix">£</span>
+          <input type="number" id="turnover" placeholder="e.g. 500000" min="0" inputmode="numeric"/>
+        </div>
+      </div>
+
+      <div class="fields-row">
+        <div class="field-group" style="margin-bottom:0;">
+          <label for="capacity">Setting Capacity</label>
+          <div class="field-hint">Total registered places at your nursery.</div>
+          <div class="input-wrap">
+            <span class="prefix" style="font-size:0.85rem; color:var(--muted);">#</span>
+            <input type="number" id="capacity" placeholder="e.g. 60" min="0" inputmode="numeric"/>
+          </div>
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label for="profit">Annual Profit (EBITDA)</label>
+          <div class="field-hint">Earnings before interest, tax, depreciation &amp; amortisation.</div>
+          <div class="input-wrap">
+            <span class="prefix">£</span>
+            <input type="number" id="profit" placeholder="e.g. 80000" min="0" inputmode="numeric"/>
+          </div>
+        </div>
+      </div>
+
+      <button class="cta-btn" onclick="calculateValuation()">Value My Nursery</button>
+    </div>
+
+    <!-- RESULTS CARD -->
+    <div class="results-card" id="resultsCard">
+      <div class="section-label">Step 2 — Your Indicative Valuation</div>
+      <h2>Estimated Valuation Range</h2>
+      <div class="gold-divider"></div>
+
+      <div class="valuation-band">
+        <div class="val-item">
+          <div class="val-label">Minimum Estimate</div>
+          <div class="val-amount" id="valMin">—</div>
+        </div>
+        <div class="val-range-label">Estimated<br>Range</div>
+        <div class="val-divider"></div>
+        <div class="val-item">
+          <div class="val-label">Maximum Estimate</div>
+          <div class="val-amount" id="valMax">—</div>
+        </div>
+      </div>
+
+      <div class="fee-table">
+        <div class="fee-row highlight">
+          <div class="fee-row-left">
+            <div class="fee-row-label" style="font-weight:500; color:var(--green);">Fees payable to us on a successful sale</div>
+            <div class="fee-row-note">We operate on a 100% success-only basis — you pay nothing upfront.</div>
+          </div>
+          <div class="fee-row-amount green">£0</div>
+        </div>
+        <div class="fee-row">
+          <div class="fee-row-left">
+            <div class="fee-row-label">Fees payable to other brokers</div>
+            <div class="fee-row-note">Typical broker commission: 2.5% × mid-point valuation</div>
+          </div>
+          <div class="fee-row-amount muted" id="otherFees">—</div>
+        </div>
+      </div>
+
+      <div class="saving-box">
+        <div class="saving-text">
+          <div class="saving-label">Your Potential Saving with Oakfront Capital</div>
+          <div class="saving-amount" id="savingAmount">—</div>
+          <div class="saving-sub">compared to a typical broker fee</div>
+        </div>
+        <a href="index.html#contact">Speak to a Partner</a>
+      </div>
+
+      <p class="disclaimer">
+        This tool provides an indicative valuation range for illustration purposes only and does not constitute financial or professional advice. Actual valuations depend on a wide range of factors including occupancy rates, staff retention, lease terms, regulatory standing and local market conditions. Oakfront Capital recommends obtaining a formal valuation as part of any sale process.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="eyebrow">Why Oakfront Capital</div>
+  <h2>No Fees. No Risk. Just Results.</h2>
+  <p>We operate on a 100% success-only basis. You pay nothing unless and until your sale completes — so there's no financial risk in speaking to us.</p>
+  <a href="index.html#contact">Book a Confidential Consultation</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      Oakfront Capital
+      <small>Nursery M&amp;A Specialists</small>
+    </div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="index.html#buysell">Buy &amp; Sell</a>
+      <a href="index.html#about-intro">About</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+    <div class="footer-copy">© 2026 Oakfront Capital. All rights reserved.</div>
+  </div>
+</footer>
+
+<a href="#top" class="back-top" id="backTop" aria-label="Back to top">
+  <svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+</a>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('main-nav');
+  const backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+    backTop.classList.toggle('visible', window.scrollY > 400);
+  });
+
+  function fmt(n) {
+    return '£' + Math.round(n).toLocaleString('en-GB');
+  }
+
+  function calculateValuation() {
+    const turnover = parseFloat(document.getElementById('turnover').value);
+    const capacity = parseFloat(document.getElementById('capacity').value);
+    const profit   = parseFloat(document.getElementById('profit').value);
+
+    // Validate — only turnover is strictly required for valuation formula
+    if (!turnover || isNaN(turnover) || turnover <= 0) {
+      alert('Please enter your Annual Turnover to generate a valuation.');
+      document.getElementById('turnover').focus();
+      return;
+    }
+
+    // Valuation formulas
+    // Min: Turnover × 18% × 5
+    const valMin = turnover * 0.18 * 5;
+    // Max: Turnover × 25% × 6
+    const valMax = turnover * 0.25 * 6;
+
+    // Mid-point for broker fee calculation
+    const midpoint = (valMin + valMax) / 2;
+
+    // Other broker fees: 2.5% of midpoint valuation
+    const otherFees = midpoint * 0.025;
+
+    // Saving = other broker fees (since ours = £0)
+    const saving = otherFees;
+
+    // Populate results
+    document.getElementById('valMin').textContent    = fmt(valMin);
+    document.getElementById('valMax').textContent    = fmt(valMax);
+    document.getElementById('otherFees').textContent = fmt(otherFees);
+    document.getElementById('savingAmount').textContent = fmt(saving);
+
+    // Show results
+    const card = document.getElementById('resultsCard');
+    card.classList.add('visible');
+
+    // Smooth scroll to results
+    setTimeout(() => {
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+  }
+
+  // Allow pressing Enter in any input to trigger calculation
+  document.querySelectorAll('input[type="number"]').forEach(el => {
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter') calculateValuation();
+    });
+  });
+</script>
+
+</body>
+</html>
